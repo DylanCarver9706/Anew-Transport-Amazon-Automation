@@ -18,8 +18,8 @@ def api():
     # Validate the data
 
 
-    response_data = update_order_child_statuses(request_data["order_numbers_list"], auth_data["username"], auth_data["password"])
-
+    response_data = update_order_child_statuses(request_data["order_numbers_list"], auth_data["pro_username"], auth_data["pro_password"])
+    print(response_data)
     # Return a JSON response
     return jsonify(response_data)
 

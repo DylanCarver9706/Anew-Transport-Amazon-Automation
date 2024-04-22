@@ -1,1 +1,5 @@
 auth.json
+node_modules/
+myenv/
+env/
+__pycache__/

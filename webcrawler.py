@@ -33,13 +33,13 @@ def wait_for_element(by, value, timeout=1000):
     )
 
 def wait_for_loading_spinner():
-    try:
-        WebDriverWait(driver, 10).until(
-            EC.invisibility_of_element_located((By.CSS_SELECTOR, '#txt_search_ajax_loader[style*="display: none;"]'))
-        )
-        print("Loading spinner has disappeared.")
-    except TimeoutException:
-        print("Loading spinner did not disappear within the specified time.")
+    # try:
+    WebDriverWait(driver, 10).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, '#txt_search_ajax_loader[style*="display: none;"]'))
+    )
+    print("Loading spinner has disappeared.")
+    # except TimeoutException:
+        # print("Loading spinner did not disappear within the specified time.")
 
 def log_in(login_url, username, password):
     # Open the URL in the web browser
@@ -71,8 +71,8 @@ def log_in(login_url, username, password):
 #     logout_link = wait_for_element(By.XPATH, '//a[contains(@href, "abd_logout.php")]')
 #     logout_link.click()
 #     time.sleep(2)
-    
-def update_order(order_number, dashboard_url):
+
+def search(order_number, dashboard_url):
 
     # Wait until the search image element is present
     search_img = wait_for_element(By.ID, 'search_img')
@@ -92,26 +92,34 @@ def update_order(order_number, dashboard_url):
 
     # Wait for search results to appear
     wait_for_loading_spinner()
+    time.sleep(3)
     search_results = wait_for_element(By.ID, 'search_results')
 
-    time.sleep(2)
+    time.sleep(3)
+
+    # Find all anchor tags (a) within the div
+    a_tags = search_results.find_elements(By.TAG_NAME, 'a')
+
+    # Check if any anchor tags are found
+    if len(a_tags) > 0:
+        # Click the first anchor tag
+        first_a_tag = a_tags[0]
+        first_a_tag.click()
+        print("Clicked the first <a> tag.")
+    else:
+        print("Error: No search results found.")
+
+    return "Success"
     
-    # Check if there are any search results
-    if "There are no results for this search." in search_results.text:
-        print("Error: No results found for this search.")
-        driver.get(dashboard_url)
-        wait_for_url(dashboard_url)
-        return "Error: No results found for this search."
-    
-    # Find the first anchor tag within search results
-    # first_result = wait_for_element(By.TAG_NAME, 'a')
-    first_result = search_results.find_element(By.TAG_NAME, 'a')
-    
-    # Extract the href attribute
-    href = first_result.get_attribute("href")
+def update_order(order_number, dashboard_url):
+
+    result = search(order_number, dashboard_url)
+
+    if "Error" in result:
+        return result
     
     # Navigate to the link
-    driver.get(href)
+    # driver.get(result)
 
     # Wait for the select element with id=status_child to appear
     ##########################################################################
@@ -123,8 +131,8 @@ def update_order(order_number, dashboard_url):
     # select = Select(status_select)
     # select.select_by_visible_text("Invoice Sent")
     ##########################################################################
-    driver.get(dashboard_url)
-    wait_for_url(dashboard_url)
+    # driver.get(dashboard_url)
+    # wait_for_url(dashboard_url)
     return "Success"
 
 def update_order_child_statuses(
@@ -138,7 +146,9 @@ def update_order_child_statuses(
     orders = []
 
     try:
-        log_in(login_url, username, password)
+        # current_url = driver.current_url
+        # if current_url != dashboard_url:
+        #     log_in(login_url, username, password)
         
         # Wait until the URL changes to the desired URL
         if not wait_for_url(dashboard_url, timeout=1000):
