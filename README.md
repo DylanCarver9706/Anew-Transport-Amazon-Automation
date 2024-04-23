@@ -1,11 +1,17 @@
 Create a Python Virtual environment:
-python3 -m venv <env name>
+python -m venv <env name>
 NOTE: Python 3+ is required
 
 Start python virtual environment:
 .\<env name>\Scripts\activate
 
-Create an auth.json file with the key value pairs for Auth on Pro adb. The required key/value pairs are "username" and "password"
+Create an auth.json file with the key value pairs for Auth on Pro adb. The required key/value pairs are:
+"pro_username"
+"pro_password"
+"database_host"
+"database_user"
+"database_password"
+"database_database"
 
 Install dependencies:
 pip install -r requirements.txt

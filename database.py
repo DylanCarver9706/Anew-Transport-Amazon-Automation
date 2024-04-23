@@ -25,7 +25,7 @@ def create_order():
     order_number = data['order_number']
 
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO complete_orders (status, order_number) VALUES (%s, %s)", (status, order_number))
+    cursor.execute("INSERT INTO orders (status, order_number) VALUES (%s, %s)", (status, order_number))
     conn.commit()
     cursor.close()
 
@@ -35,7 +35,7 @@ def create_order():
 # @app.route('/orders', methods=['GET'])
 def get_orders():
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM complete_orders")
+    cursor.execute("SELECT * FROM orders")
     orders = cursor.fetchall()
     cursor.close()
 
@@ -45,7 +45,7 @@ def get_orders():
 @app.route('/orders/<order_number>', methods=['GET'])
 def get_order_by_order_number_api(order_number):
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM complete_orders WHERE order_number = %s", (order_number,))
+    cursor.execute("SELECT * FROM orders WHERE order_number = %s", (order_number,))
     order = cursor.fetchone()
     cursor.close()
 
@@ -62,7 +62,7 @@ def get_order_by_order_number_api(order_number):
 # @app.route('/orders/<order_number>', methods=['GET'])
 def get_order_by_order_number(order_number):
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM complete_orders WHERE order_number = %s", (order_number))
+    cursor.execute("SELECT * FROM orders WHERE status = %s", (order_number))
     order = cursor.fetchone()
     cursor.close()
 
@@ -76,9 +76,21 @@ def get_order_by_order_number(order_number):
     else:
         return {"message": "Order not found"}
 
+@app.route('/orders/created', methods=['GET'])
+def get_created_orders():
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM orders WHERE status = 'created'")
+    created_orders = cursor.fetchall()
+    cursor.close()
+
+    if created_orders:
+        return jsonify(created_orders), 200
+    else:
+        return jsonify({"message": "No orders with status 'created' found"}), 404
+
 def update_order(order_id, new_status):
     cursor = conn.cursor()
-    cursor.execute("UPDATE complete_orders SET status = %s WHERE id = %s", (new_status, order_id))
+    cursor.execute("UPDATE orders SET status = %s WHERE id = %s", (new_status, order_id))
     conn.commit()
     cursor.close()
 
