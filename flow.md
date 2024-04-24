@@ -1,28 +1,13 @@
 # Bot1
-1. Once per alternating hour of Bot2, get rows from excel where "BotStatus" column == "Ready to Update" with an OData query
-2. Add the value from that row's "Order #" column into a list
-3. Do this for all rows
-4. Loop through list
-5. create a new entry into the db with order_number == column "Order #" and status == "created"
-6. Update "BotStatus" column to say "updating"
+1. Once per hour, get rows from excel where "BotStatus" column == "Ready to Update" with an OData query
+4. Loop through rows
+5. Make an http request to localhost:5000 which is port forwarded through Ngrok
+6. This will accept the value from the "Order #" column and find and update that order to "Invoice Sent" in ProABD
+7. Then it will update the "BotStatus" column to say "Updated: <date>"
+8. If an error occurs or if the order is not found, it will update the "BotStatus" column to say "Error: <date>"
+9. If the order is not found, it will update the "BotStatus" column to say "Error: No result found"
+10. This will happen for all sheets
 
 # Bot2
-1. Once per alternating hour of Bot1, access db to get all entries where status == "created"
-2. Extract the order_numbers and send it into webscraper
-6. If it finds the order in Pro and updates it
-7. Query the db by the order number to get the item id
-8. Update the item so the status say "updated"
-8. If it doesn't find it and can't update it, update the entry in the db with a status of "Error: Cannot find order in Pro"
-
-# Bot3
-1. Once per alternating hour of Bot1 and Bot2, Get rows from excel where "BotStatus" column == "Ready to Update"
-    Either with an OData query or a loop in power automate
-2. Add the value from that row's "Order #" column into a list
-3. Do this for all rows
-10. Loop through the list
-11. Query the db where the "Owner #" column == order_number
-11. If that entry exists and the status == "Updated"
-12. Update the "Updated Status in Pro" column with the timestamp & update the "BotStatus" to "Updated" 
-12. Else, update the "Updated Status in Pro" column with "No" and update the "BotStatus" to the status from the return list 
-
-
+1. Once per day, another flow will look for any items that have a "BotStatus" column that says "Updated: <date>"
+2. It will compile them into an email to be sent to Jess

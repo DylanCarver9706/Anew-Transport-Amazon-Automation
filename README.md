@@ -1,28 +1,20 @@
 Create a Python Virtual environment:
-python -m venv <env name>
+python -m venv venv
 NOTE: Python 3+ is required
 
 Start python virtual environment:
-.\<env name>\Scripts\activate
-
-Create an auth.json file with the key value pairs for Auth on Pro adb. The required key/value pairs are:
-"pro_username"
-"pro_password"
-"database_host"
-"database_user"
-"database_password"
-"database_database"
+.\venv\Scripts\activate
 
 Install dependencies:
 pip install -r requirements.txt
 
-Start database in MySQL Workbench:
-Open MySQL Workbench app
-Login
-Start the DB instance
-If this is the first time opening the instance, run the contents of the SQL file in this repo to create the schema
+Get cookies data:
 
-Run python flask_api.py to start the Flask api
+To obtain a new cookie, follow the steps below:
 
-Login to ProABD in the Chrome Browser that appears
-
+1. Log into ProABD
+2. Once logged in, open the Developer tools by doing Right Click -> Inspect
+3. In the new window that opens, go to the Console tab
+4. Find the carrot ">" indicating that your cursor goes there
+5. input "console.log(document.cookie)" and hit Enter
+6. Copy the output text into a cookies.txt file
