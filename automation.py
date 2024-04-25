@@ -56,7 +56,12 @@ def query_order(order_number):
 
     soup = BeautifulSoup(response.text, "html.parser")
 
-    if soup.find('ul', class_='list-group').find('a'):
+    # print(response.text)
+
+    if "There are no results for this search" in response.text:
+        # driver.quit()
+        return "Error: No result found"
+    elif soup.find('ul', class_='list-group').find('a'):
         # If there is an <a> tag within the <ul> element
         result_href = soup.find('ul', class_='list-group').find('a')['href']
         return result_href
@@ -74,7 +79,8 @@ def update_child_status(order_number):
     try:
         url = query_order(order_number)
         
-        if url == "No result found!":
+        if url == "Error: No result found":
+            driver.quit()
             return {"outcome": "Error: No result found"}
 
         # Open the URL
@@ -86,6 +92,7 @@ def update_child_status(order_number):
         driver.get(url)
         wait_for_url(driver, url)
 
+        # time.sleep(5)
         select_element = wait_for_element(driver, By.ID, "status_child")
 
         # Create a Select object
